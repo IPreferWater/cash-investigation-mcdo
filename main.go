@@ -1,26 +1,28 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 )
 
 func main() {
-	fmt.Println("go")
+	if len(os.Args) < 2 {
+		log.Println("need at least one arg list-stores || info-stores || info-societes")
+		os.Exit(0)
+	}
 	arg := os.Args[1]
-	fmt.Printf("args are %s\n", os.Args)
+	log.Printf("args are %s\n", os.Args)
 
 	if arg == "list-stores" || arg == "ls" {
 		getStoresIdsAndWrite()
 	} else if arg == "info-stores" || arg == "is" {
 		getStoresInfosAndWrite()
-	} else if arg == "info-societes" ||arg == "ic" {
+	} else if arg == "info-societes" || arg == "ic" {
 		getInfoCompanyAndWrite()
 	}
 }
 
-func getStoresIdsAndWrite(){
+func getStoresIdsAndWrite() {
 	storesIDs, err := getListStores()
 	if err != nil {
 		log.Fatal("can't get storesIds")
@@ -28,32 +30,32 @@ func getStoresIdsAndWrite(){
 	writeStoresIDs(storesIDs)
 }
 
-func getStoresInfosAndWrite(){
-	csvLines,err := readFromCsv("store.csv")
+func getStoresInfosAndWrite() {
+	csvLines, err := readFromCsv("store.csv")
 	if err != nil {
-		log.Fatalf("can't read csv=> %s",err)
+		log.Fatalf("can't read csv=> %s", err)
 	}
 
 	for index, l := range csvLines {
 		storeID := l[0]
-		storeInfo,err := getStoresInfo(storeID)
+		storeInfo, err := getStoresInfo(storeID)
 		if err != nil {
 			log.Fatal(err)
 		}
-		l= append(l, storeInfo.Name)
-		l= append(l, storeInfo.CompanyName)
-		l= append(l, storeInfo.Coordinates)
-		l= append(l, storeInfo.RestaurantAddress)
-		csvLines[index]= l
+		l = append(l, storeInfo.Name)
+		l = append(l, storeInfo.CompanyName)
+		l = append(l, storeInfo.Coordinates)
+		l = append(l, storeInfo.RestaurantAddress)
+		csvLines[index] = l
 	}
 
-	writeCsv(csvLines,"info_stores.csv")
+	writeCsv(csvLines, "info_stores.csv")
 }
 
-func getInfoCompanyAndWrite(){
-	csvLines,err := readFromCsv("info_stores.csv")
+func getInfoCompanyAndWrite() {
+	csvLines, err := readFromCsv("info_stores.csv")
 	if err != nil {
-		log.Fatalf("can't read csv=> %s",err)
+		log.Fatalf("can't read csv=> %s", err)
 	}
 	for index, l := range csvLines {
 		companyName := l[2]
@@ -61,9 +63,9 @@ func getInfoCompanyAndWrite(){
 		if err != nil {
 			log.Fatal(err)
 		}
-		l=append(l, companyInfos...)
-		
-		csvLines[index]= l
+		l = append(l, companyInfos...)
+
+		csvLines[index] = l
 	}
-	writeCsv(csvLines,"info_company.csv")
+	writeCsv(csvLines, "info_company.csv")
 }
